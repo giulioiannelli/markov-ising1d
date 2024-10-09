@@ -1,0 +1,10 @@
+name: markov-ising1d
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - gcc
+  - make 
+  - cython
+  - pip
+  - python
