@@ -6,7 +6,6 @@
 
 int main(int argc, char *argv[])
 {
-    __set_seed_SFMT();
     // parse command-line arguments
     Options options;
     if (parse_arguments(argc, argv, &options) != 0) {
@@ -14,48 +13,46 @@ int main(int argc, char *argv[])
     }
     // decalre variables
     FILE *f_out;
-    char buf[256];
+    char buf[1024];
+    char buf2[256];
+    int8_t *s;
     uint32_t N = options.N;
+    uint64_t K = options.conf_num;
+    uint32_t seed1 = SEED;
+    uint32_t seed2 = SIID;
     double T = options.T;
     // check pflip
     check_pflip(N, T);
+    // initialize the SFMT random number generator
+    if (options.rand_seed){
+        seed1 = CEED;
+        seed2 = CIID;
+    }
+    __set_seed_SFMT(seed1, seed2);
+    __check_RNG();
     // open the file
-    sprintf(buf, PATH_DATA );
-    // if ((f_out = fopen(buf, "a+b")) == NULL)
-    // {
-    //     printf(MSGFAIL PFFOPEN "%s" MSGEXIT, buf);
-    //     exit(EXIT_FAILURE);
-    // }
-    // fseek(f_out, 0, SEEK_END);
-    // /* generate missingK configuration */
-    // for (uint32_t k = 0; k < missingK; k++)
-    // {
-    //     s = calloc(N, sizeof(*s));
-    //     s[0] = SGN01(rnd_dbl() - .5);
-    //     for (uint32_t i = 1; i < N; i++)
-    //     {
-    //         if (rnd_dbl() < PFLIP)
-    //             s[i] = s[i - 1];
-    //         else
-    //             s[i] = -s[i - 1];
-    //     }
-    //     fwrite(s, sizeof(*s), N, f_out);
-    //     free(s);
-    // }
-    // if (effKNUM < KNUM)
-    // {
-    //     sprintf(buf2, DIRCFGS P_TYPE _U __NIS__ _U __TIS__ _U __KNUMIS__ EXTBIN,
-    //             N, T, KNUM);
-    //     if ((rename(buf, buf2)) == 0)
-    //     {
-    //         fprintf(f_log, PIFRSUC);
-    //     }
-    //     else
-    //     {
-    //         fprintf(f_log, MSGFAIL PFUNREN);
-    //     }
-    // }
-    // fclose(f_log);
-    // fclose(f_out);
+    sprintf(buf2, "%sN%u/", PATH_DATA, N);
+     // Ensure the directory exists
+    if (ensure_directory_exists(buf2) != 0) {
+        fprintf(stderr, "Failed to ensure directory exists. Exiting.\n");
+        exit(EXIT_FAILURE);
+    }
+    sprintf(buf, "%s/ising1d_T%.3g_K%lu_[%#.8X_%#.8X].bin", buf2, T, K, seed1, seed2);
+    __fopen(&f_out, buf, "wb");
+    for (uint32_t k = 0; k < K; k++)
+    {
+        s = calloc(N, sizeof(*s));
+        s[0] = SGN01(RNG_dbl() - .5);
+        for (uint32_t i = 1; i < N; i++)
+        {
+            if (RNG_dbl() < PFLIP)
+                s[i] = s[i - 1];
+            else
+                s[i] = -s[i - 1];
+        }
+        fwrite(s, sizeof(*s), N, f_out);
+        free(s);
+    }
+    fclose(f_out);
 }
  
