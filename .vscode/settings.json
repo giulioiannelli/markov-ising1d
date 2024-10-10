@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "Makefile": "c",
+        "inttypes.h": "c",
+        "stdlib.h": "c",
+        "utils.h": "c",
+        "stdint.h": "c",
+        "stdio.h": "c",
+        "string.h": "c",
+        "cerrno": "c",
+        "options.h": "c",
+        "math.h": "c",
+        "unistd.h": "c"
+    }
+}
