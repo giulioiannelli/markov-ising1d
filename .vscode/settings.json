@@ -10,6 +10,8 @@
         "cerrno": "c",
         "options.h": "c",
         "math.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "cstdint": "c",
+        "sfmt.h": "c"
     }
 }
