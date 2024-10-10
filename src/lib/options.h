@@ -6,13 +6,17 @@
 #include <getopt.h>
 #include "utils.h"
 
+#define DEFAULT_K 1
+#define DEFAULT_OUTPUT_FILE "output.txt"
+
 // Structure to hold parsed command-line options
 typedef struct {
     int verbose;          // Flag for verbose mode
-    uint64_t conf_num;
-    char *output_file;    // Output file name
     uint32_t N;     // Input file name
     double T;
+    uint64_t conf_num;
+    char *output_file;    // Output file name
+    int rand_seed;        // Flag to set seed randomly
 } Options;
 
 // Function to parse command-line arguments
