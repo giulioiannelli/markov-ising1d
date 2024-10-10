@@ -26,9 +26,9 @@
 #define RANDTR01_11 (2 * (RNG_u64() % 2) - 1)
 
 /* RNG functions related preprocessor directives */
-#define N_PRIRNG 10 /* number of random numbers to print by __check_RNG*/
-#define STR_CHECK_RNG "rand_call: (double) %04.4e,\t(uint64_t) %" PRIu64 "\n"
-
+#define N_PRIRNG 1 /* number of random numbers to print by __check_RNG*/
+#define STR_CHECK_RNG "rand_call: (double) %.3g,\t(uint64_t) %" PRIu64 "\n"
+#define SET_SEED_IDX "Initial sfmt.idx: %d - Random number: %" PRIu64 "\n"
 /* global variables for RNG */
 extern sfmt_t sfmt;
 extern uint32_t *seed_rand;
@@ -36,7 +36,7 @@ extern uint32_t *seed_rand;
 /* global functions for RNG */
 extern uint64_t SFMTrng_u64(void);
 extern double   SFMTrng_dbl(void);
-extern void __set_seed_SFMT(void);
+extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2);
 extern void __check_RNG(void);
 extern uint64_t* __gen_rand_u64_array(size_t N);
 
