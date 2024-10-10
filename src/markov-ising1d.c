@@ -1,3 +1,4 @@
+// markov-ising1d.c
 #include "utils.h"
 #include "options.h"
 
@@ -37,7 +38,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Failed to ensure directory exists. Exiting.\n");
         exit(EXIT_FAILURE);
     }
-    sprintf(buf, "%s/ising1d_T%.3g_K%lu_[%#.8X_%#.8X].bin", buf2, T, K, seed1, seed2);
+    sprintf(buf, "%s%cising1d_T%.3g_K%lu_[%#.8X_%#.8X].bin", buf2, PATH_SEPARATOR, T, K, seed1, seed2);
     __fopen(&f_out, buf, "wb");
     for (uint32_t k = 0; k < K; k++)
     {

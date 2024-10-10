@@ -28,7 +28,7 @@
 
 #define SGN01(x) (x < 0 ? -1 : 1)
 
-#define PATH_DATA "data/"
+#define PATH_DATA "data" PATH_SEPARATOR
 
 #define ERR_MESSAGE_ARGS "Error: Expected exactly 2 positional arguments (N and T), but got %d.\n"
 #define ERR_MESSAGE_CONV "Conversion failed, got string: %s\n"

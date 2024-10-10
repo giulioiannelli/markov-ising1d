@@ -1,3 +1,4 @@
+// options.c
 #include "options.h"
 // Function to print usage/help message
 void print_usage(const char *prog_name) {
