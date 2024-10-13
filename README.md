@@ -6,11 +6,13 @@ This repo is compatible with Linux based operating systems.
 
 A conda environment comes along the code for consistency in C compiler, which is `gcc 11.4.0`, and for python, `3.12`. Moreover the conda environment locally install `make` tool. If all of the above requirements are satisfied there is no use for the next step and one can jump directly to section [Go to Real Cool Heading section](#compiling-c-programs).
 
-### conda environemnt setup
-In order to setup the conda environemnt `(markov-ising1d)` you can use the `conda` utility as
+### conda environment setup
+In order to setup the conda environment `(markov-ising1d)` you can use the `conda` utility as
 ```
 conda env create -f environment.yml
+conda activate markov-ising1d
 ```
+
 ### compiling C programs 
 In order to make the executable for running the C programs just run
 ```
@@ -107,3 +109,90 @@ INFO: Reshaping data to shape (1000, 1000)...
 INFO: Data successfully reshaped to (1000, 1000).
 INFO: Data successfully written to 'data/read_withpy.txt'.
 ```
+
+## why do we use markov chain to generate ising 1d patterns
+In the one-dimensional (1D) Ising model, each spin interacts only with its nearest neighbors. This simplicity allows us to generate spin configurations efficiently using a Markov process without the need for thermalizing the entire linear chain. Below, I provide a formal explanation with relevant formulas to demonstrate why the provided generation process correctly samples configurations from the Boltzmann distribution of the 1D Ising model.
+
+### The 1D Ising Model Basics
+
+The Hamiltonian $H$ for the 1D Ising model with nearest-neighbor interactions is given by:
+$$
+H(\mathbf{s}) = -J \sum_{i=1}^{N-1} s_i s_{i+1}
+$$
+where:
+- $\mathbf{s} = (s_1, s_2, \dots, s_N)$ is a spin configuration.
+- $s_i \in \{+1, -1\}$ represents the spin at site $ i $.
+- $J$ is the interaction strength between neighboring spins.
+- $N$ is the total number of spins.
+
+The Boltzmann distribution for this system at temperature $T$ is:
+$$
+P(\mathbf{s}) = \frac{1}{Z} e^{-\beta H(\mathbf{s})} = \frac{1}{Z} \exp\left(\beta J \sum_{i=1}^{N-1} s_i s_{i+1}\right)
+$$
+where $\beta = \frac{1}{k_B T}$ and $ Z $ is the partition function ensuring normalization.
+
+### Factorization of the Boltzmann Distribution
+
+Due to the nearest-neighbor interactions in the 1D Ising model, the joint probability $P(\mathbf{s})$ can be factorized into conditional probabilities:
+$$
+P(\mathbf{s}) = P(s_1) \prod_{i=2}^N P(s_i \mid s_{i-1})
+$$
+This factorization leverages the Markov property, where each spin $s_i$ depends only on its immediate predecessor $s_{i-1}$.
+
+### Determining the Conditional Probabilities
+
+To match the Boltzmann distribution, the conditional probability $P(s_i \mid s_{i-1})$ must satisfy:
+$$
+\frac{P(s_i = s_{i-1} \mid s_{i-1})}{P(s_i = -s_{i-1} \mid s_{i-1})} = \exp\left(2\beta J s_i s_{i-1}\right)
+$$
+Since $s_i s_{i-1} = \pm 1$, when $s_i=s_{i-1}$ this simplifies to:
+$$
+\frac{P(s_i = s_{i-1} \mid s_{i-1})}{P(s_i = -s_{i-1} \mid s_{i-1})} = \exp(2\beta J)
+$$
+Let $P_{\text{flip}} = P(s_i = s_{i-1} \mid s_{i-1})$. Then:
+$$
+\frac{P_{\text{flip}}}{1 - P_{\text{flip}}} = \exp(2\beta J)
+$$
+
+Solving for $P_{\text{flip}}$:
+$$
+P_{\text{flip}} = \frac{\exp(2\beta J)}{1 + \exp(2\beta J)}
+$$
+Using the hyperbolic tangent function identity:
+$$
+\frac{\tanh(x) + 1}{2} = \frac{\exp(2x)}{1 + \exp(2x)}
+$$
+Substituting $x = \beta J$:
+$$
+P_{\text{flip}} = \frac{\tanh(\beta J) + 1}{2} = \frac{1}{2} \left( \tanh\left(\frac{J}{k_B T}\right) + 1 \right)
+$$
+
+This matches the definition in the code.
+
+### The Generation Process as a Markov Chain
+
+The provided generation process implements the following steps:
+
+1. **Initialization**: 
+   - The first spin $s_0$ is randomly set to $+1$ or $-1$ with equal probability:
+     $$
+     P(s_0) = \frac{1}{2}, \quad P(s_0 = +1) = P(s_0 = -1) = \frac{1}{2}
+     $$
+   
+2. **Sequential Spin Generation**:
+   - For each subsequent spin $s_i$ ($i = 1, 2, \dots, N-1$):
+     $$
+     s_i = 
+     \begin{cases} 
+     s_{i-1} & \text{with probability } P_{\text{flip}} \\
+     -s_{i-1} & \text{with probability } 1 - P_{\text{flip}}
+     \end{cases}
+     $$
+   
+This process effectively constructs a Markov chain where each spin depends only on its immediate predecessor, adhering to the factorization of the Boltzmann distribution.
+
+### **6. Summary**
+
+- **Markov Property**: In 1D, each spin interacts only with its nearest neighbor, allowing the use of a Markov process.
+- **Conditional Probabilities**: By setting $P_{\text{flip}} = \frac{1}{2} \left( \tanh\left(\frac{J}{k_B T}\right) + 1 \right)$, the conditional probabilities align with the Boltzmann distribution.
+- **Sequential Generation**: Spins are generated sequentially, ensuring that the overall configuration probability matches $P(\mathbf{s})$.
