@@ -9,14 +9,18 @@ SFMT_DIR := $(LIB_DIR)/SFMT
 
 # Source files
 SRCS := $(SRC_DIR)/markov-ising1d.c \
-        $(LIB_DIR)/options.c \
-        $(LIB_DIR)/utils.c \
-        $(LIB_DIR)/sfmtrng.c \
-        $(SFMT_DIR)/SFMT.c  # Add this line
-
+		$(LIB_DIR)/options.c \
+		$(LIB_DIR)/utils.c \
+		$(LIB_DIR)/sfmtrng.c \
+		$(SFMT_DIR)/SFMT.c  # Add this line
+SRC2 := $(SRC_DIR)/markov-ising1d_reader.c \
+		$(LIB_DIR)/options_reader.c \
+		$(LIB_DIR)/utils.c \
+		$(LIB_DIR)/sfmtrng.c \
+		$(SFMT_DIR)/SFMT.c
 # Object files
 OBJS := $(SRCS:.c=.o)
-
+OBJS2 := $(SRC2:.c=.o)
 # Compiler and flags
 CC := gcc
 LMFLAG := -lm
@@ -27,12 +31,13 @@ CFLAGS := $(WALLFLAG) $(WEXTFLAG) -I$(LIB_DIR) -I$(SFMT_DIR) -g $(DSFMTFLAG) -fP
 
 # Target executable name
 TARGET := markov-ising1d
+TARGET2 := markov-ising1d_reader
 
 # ============================
 # Default Target
 # ============================
 
-all: $(TARGET)
+all: $(TARGET) $(TARGET2)
 
 # ============================
 # Linking
@@ -41,6 +46,8 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LMFLAG)
 
+$(TARGET2): $(OBJS2)
+	$(CC) $(CFLAGS) -o $@ $^ $(LMFLAG)
 # ============================
 # Compilation
 # ============================

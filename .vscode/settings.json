@@ -12,6 +12,8 @@
         "math.h": "c",
         "unistd.h": "c",
         "cstdint": "c",
-        "sfmt.h": "c"
+        "sfmt.h": "c",
+        "options_reader.h": "c",
+        "getopt.h": "c"
     }
 }
