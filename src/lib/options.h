@@ -16,7 +16,7 @@ typedef struct {
     double T;
     uint64_t conf_num;
     char *output_file;    // Output file name
-    int rand_seed;        // Flag to set seed randomly
+    bool rand_seed;        // Flag to set seed randomly
 } Options;
 
 // Function to parse command-line arguments

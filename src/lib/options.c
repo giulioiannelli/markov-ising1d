@@ -21,7 +21,7 @@ int parse_arguments(int argc, char *argv[], Options *opts) {
     
     // Initialize options with default values
     opts->verbose = false;
-    opts->rand_seed = 0;
+    opts->rand_seed = false;
     opts->conf_num = DEFAULT_K;
     opts->output_file = DEFAULT_OUTPUT_FNAME; // Default output file
 
@@ -31,12 +31,12 @@ int parse_arguments(int argc, char *argv[], Options *opts) {
         {"conf_num",  required_argument, 0, 'k'},
         {"output",    required_argument, 0, 'o'},
         {"help",      no_argument,       0, 'h'},
-        {"rand_seed", no_argument, 0, 'r'},
+        {"rand_seed", no_argument,       0, 'r'},
         {0,           0,                 0,  0 }
     };
 
     // Parse options using getopt_long
-    while ((opt = getopt_long(argc, argv, "vk:o:hr:", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "vk:o:hr", long_options, &option_index)) != -1) {
         switch (opt) {
             case 'v':
                 opts->verbose = true;
@@ -48,7 +48,7 @@ int parse_arguments(int argc, char *argv[], Options *opts) {
                 opts->conf_num = strtoull_check(optarg, 10);
                 break;
             case 'r':
-                opts->rand_seed = 1;
+                opts->rand_seed = true;
                 break;
             case 'h':
                 print_usage(argv[0]);

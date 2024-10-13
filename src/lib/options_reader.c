@@ -9,7 +9,7 @@ void print_usage(const char *prog_name) {
     printf("  mode\t\tOperation mode ('file' to write to a text file, 'stdout' to print to stdout). (mandatory)\n");
     printf("  N\t\tLength of each configuration (number of +1/-1 entries). (mandatory)\n");
     printf("\nOptions:\n");
-    printf("  -o, --output_file\tPath to the output text file.\n");
+    printf("  -o, --output\tPath to the output text file.\n");
     printf("  -h, --help\t\tDisplay this help message.\n");
     printf("  -v, --verbose\t\tEnable verbose mode.\n");
     printf("\nExamples:\n");
