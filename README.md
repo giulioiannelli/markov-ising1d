@@ -16,7 +16,7 @@ In order to make the executable for running the C programs just run
 ```
 make all
 ```
-in the root directory.
+in the root directory. This process will also create directory `data` in the `markov-ising1d` folder which is needed by the programs.
 
 ## running the generator program
 If you didnt specify a different name during compilation the executable in `markov-ising1d` folder should be `markov-ising1d`. One can visualize an helper for explanation of the parser structure, by executing `markov-ising1d` with the `-h` or `--help` flag. 

@@ -6,6 +6,7 @@
 SRC_DIR := src
 LIB_DIR := $(SRC_DIR)/lib
 SFMT_DIR := $(LIB_DIR)/SFMT
+DATA_DIR := data
 
 # Source files
 SRCS := $(SRC_DIR)/markov-ising1d.c \
@@ -37,7 +38,7 @@ TARGET2 := markov-ising1d_reader
 # Default Target
 # ============================
 
-all: $(TARGET) $(TARGET2)
+all: $(TARGET) $(TARGET2) $(DATA_DIR)
 
 # ============================
 # Linking
@@ -48,6 +49,11 @@ $(TARGET): $(OBJS)
 
 $(TARGET2): $(OBJS2)
 	$(CC) $(CFLAGS) -o $@ $^ $(LMFLAG)
+
+# Rule to create the directory
+$(DATA_DIR):
+	mkdir -p $(DATA_DIR)
+
 # ============================
 # Compilation
 # ============================
