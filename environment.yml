@@ -8,3 +8,4 @@ dependencies:
   - cython
   - pip
   - python
+  - numpy
