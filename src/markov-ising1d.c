@@ -29,16 +29,16 @@ int main(int argc, char *argv[])
         seed1 = CEED;
         seed2 = CIID;
     }
-    __set_seed_SFMT(seed1, seed2);
-    __check_RNG();
+    __set_seed_SFMT(seed1, seed2, options.verbose);
     // open the file
-    sprintf(buf2, "%sN%u/", PATH_DATA, N);
+    sprintf(buf2, PATH_DATA PS "N%u" PS, N);
      // Ensure the directory exists
-    if (ensure_directory_exists(buf2) != 0) {
+    if (ensure_directory_exists(buf2, options.verbose) != 0) {
         fprintf(stderr, "Failed to ensure directory exists. Exiting.\n");
         exit(EXIT_FAILURE);
     }
-    sprintf(buf, "%s%cising1d_T%.3g_K%lu_[%#.8X_%#.8X].bin", buf2, PATH_SEPARATOR, T, K, seed1, seed2);
+    sprintf(buf, "%s%s_T%.3g_K%lu_[%#.8X_%#.8X].bin", 
+        buf2, options.output_file, T, K, seed1, seed2);
     __fopen(&f_out, buf, "wb");
     for (uint32_t k = 0; k < K; k++)
     {

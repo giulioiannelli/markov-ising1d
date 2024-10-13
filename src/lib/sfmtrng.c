@@ -32,7 +32,7 @@ double SFMTrng_dbl(void)
  * @param void No parameters.
  */
 
-extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2)
+extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2, bool verbose)
 {
     // Seed array for the random number generator
     uint32_t seed_rand[LENSRND] = {SEED, SIID, seed1, seed2};
@@ -41,11 +41,13 @@ extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2)
     sfmt_init_by_array(&sfmt, seed_rand, LENSRND);
 
     // Debug: Print the seed array and initial index to stderr
-    fprintf(stderr, "Seed Array: %u, %u, %u, %u\n", seed_rand[0], 
-        seed_rand[1], seed_rand[2], seed_rand[3]);
-    fprintf(stderr, "Initial sfmt.idx: %d\n", sfmt.idx);
+    if (verbose) {
+        fprintf(stderr, "Seed Array: %u, %u, %u, %u\n", seed_rand[0], 
+            seed_rand[1], seed_rand[2], seed_rand[3]);
+        fprintf(stderr, "Initial sfmt.idx: %d\n", sfmt.idx);
+        __check_RNG();
+    }
 }
-
 /** print N_PRIGNG random numbers, integers and floating point types on stdout
  */
 extern void __check_RNG(void)

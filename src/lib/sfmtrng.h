@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <inttypes.h>
 #include "SFMT/SFMT.h"
@@ -36,7 +37,7 @@ extern uint32_t *seed_rand;
 /* global functions for RNG */
 extern uint64_t SFMTrng_u64(void);
 extern double   SFMTrng_dbl(void);
-extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2);
+extern void __set_seed_SFMT(uint32_t seed1, uint32_t seed2, bool verbose);
 extern void __check_RNG(void);
 extern uint64_t* __gen_rand_u64_array(size_t N);
 

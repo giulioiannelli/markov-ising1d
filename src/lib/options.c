@@ -10,7 +10,7 @@ void print_usage(const char *prog_name) {
     printf("\t-h, --help\t\t\t\tDisplay this help message.\n");
     printf("\t-v, --verbose\t\t\t\tEnable verbose mode.\n");
     printf("\t-k, --conf_num\t\tK\t\tNumber of configurations to save. [default: %d]\n", DEFAULT_K);
-    printf("\t-o, --output\t\tFILE\t\tSpecify output file. [default: %s]\n", DEFAULT_OUTPUT_FILE);
+    printf("\t-o, --output\t\tFILE\t\tSpecify output file. [default: %s]\n", DEFAULT_OUTPUT_FNAME);
     printf("\t-r, --rand_seed\t\tSEED\t\tSet the seed randomly.\n");
 }
 
@@ -20,10 +20,10 @@ int parse_arguments(int argc, char *argv[], Options *opts) {
     int option_index = 0;
     
     // Initialize options with default values
-    opts->verbose = 0;
+    opts->verbose = false;
     opts->rand_seed = 0;
     opts->conf_num = DEFAULT_K;
-    opts->output_file = DEFAULT_OUTPUT_FILE; // Default output file
+    opts->output_file = DEFAULT_OUTPUT_FNAME; // Default output file
 
     // Define long options
     static struct option long_options[] = {
@@ -39,7 +39,7 @@ int parse_arguments(int argc, char *argv[], Options *opts) {
     while ((opt = getopt_long(argc, argv, "vk:o:hr:", long_options, &option_index)) != -1) {
         switch (opt) {
             case 'v':
-                opts->verbose = 1;
+                opts->verbose = true;
                 break;
             case 'o':
                 opts->output_file = optarg;

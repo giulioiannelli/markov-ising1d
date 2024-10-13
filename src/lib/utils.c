@@ -93,11 +93,11 @@ int mkdir_p_recursive(const char *path, mode_t mode) {
     len = strlen(tmp);
 
     // Remove trailing slash if present
-    if(tmp[len - 1] == PATH_SEPARATOR)
+    if(tmp[len - 1] == PATH_SEPARATOR_C)
         tmp[len - 1] = '\0';
 
     for(p = tmp + 1; *p; p++) {
-        if(*p == PATH_SEPARATOR) {
+        if(*p == PATH_SEPARATOR_C) {
             *p = '\0';
 #ifdef _WIN32
             if (_mkdir(tmp) != 0) {
@@ -110,7 +110,7 @@ int mkdir_p_recursive(const char *path, mode_t mode) {
                     return -1;
                 }
             }
-            *p = PATH_SEPARATOR;
+            *p = PATH_SEPARATOR_C;
         }
     }
 
@@ -131,7 +131,7 @@ int mkdir_p_recursive(const char *path, mode_t mode) {
 }
 
 // Function to ensure a directory exists (cross-platform)
-int ensure_directory_exists(const char *path) {
+int ensure_directory_exists(const char *path, bool verbose) {
     struct stat st;
 
     // Check if the directory exists
@@ -151,7 +151,9 @@ int ensure_directory_exists(const char *path) {
                 fprintf(stderr, "Error: Failed to create directory %s.\n", path);
                 return -1;
             }
-            printf("Directory created: %s\n", path);
+            if (verbose) {
+                printf("Directory created: %s\n", path);
+            }
             return 0;
         } else {
             // Other errors
@@ -160,4 +162,99 @@ int ensure_directory_exists(const char *path) {
             return -1;
         }
     }
+}
+long get_file_size(FILE *fp) {
+    long current_pos = ftell(fp);
+    if (current_pos == -1L) return -1L;
+    if (fseek(fp, 0L, SEEK_END) != 0) return -1L;
+    long size = ftell(fp);
+    if (size == -1L) return -1L;
+    if (fseek(fp, current_pos, SEEK_SET) != 0) return -1L;
+    return size;
+}
+
+
+// Function to read a single configuration from the binary file
+bool read_configuration(FILE *f_in, int8_t *config, uint32_t N) {
+    size_t items_read = fread(config, sizeof(int8_t), N, f_in);
+    return items_read == N;
+}
+
+// Function to write a configuration to the output file
+bool write_configuration_to_file(FILE *f_out, int8_t *config, uint32_t N) {
+    if (f_out == NULL || config == NULL) {
+        fprintf(stderr, "Invalid file pointer or configuration array.\n");
+        return false;
+    }
+
+    for (uint32_t i = 0; i < N; i++) {
+        // Write each config value followed by a space
+        if (fprintf(f_out, "%d ", config[i]) < 0) {
+            fprintf(stderr, "Error writing to output file.\n");
+            return false;
+        }
+    }
+
+    // Write a newline at the end
+    if (fputc('\n', f_out) == EOF) {
+        fprintf(stderr, "Error writing newline to output file.\n");
+        return false;
+    }
+
+    return true;
+}
+
+// Function to print a configuration to stdout
+bool print_configuration(int8_t *config, uint32_t N) {
+    for (uint32_t i = 0; i < N; i++) {
+        printf("%d ", config[i]);
+    }
+    printf("\n");
+    return true;
+}
+
+bool process_configurations(FILE *f_in, FILE *f_out, const char *mode, uint32_t N, bool verbose) {
+    // Allocate memory for one configuration
+    int8_t *config = (int8_t *)malloc(N * sizeof(int8_t));
+    if (config == NULL) {
+        fprintf(stderr, "Error allocating memory for configuration.\n");
+        return false;
+    }
+
+    uint64_t processed = 0;
+
+    while (read_configuration(f_in, config, N)) {
+        processed++;
+
+        if (strcmp(mode, "file") == 0) {
+            if (!write_configuration_to_file(f_out, config, N)) {
+                free(config);
+                return false;
+            }
+        } else if (strcmp(mode, "stdout") == 0) {
+            if (!print_configuration(config, N)) {
+                free(config);
+                return false;
+            }
+        }
+
+        if (verbose && processed % 1000 == 0) {
+            printf("Processed %lu configurations.\n", processed);
+        }
+    }
+
+    // Check for read errors (other than EOF)
+    if (ferror(f_in)) {
+        fprintf(stderr, "Error reading from binary file.\n");
+        free(config);
+        return false;
+    }
+
+    free(config);
+
+    if (verbose) {
+        printf("Total configurations processed: %lu\n", processed);
+    }
+
+    return true;
 }
